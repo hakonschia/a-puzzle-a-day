@@ -23,8 +23,8 @@ class MainActivity : ComponentActivity() {
 
                     Board(
                         board = viewModel.board.collectAsStateWithLifecycle().value,
-                        pieces = pieces,
                         placedPieces = viewModel.placedPieces.collectAsStateWithLifecycle().value,
+                        unplacedPieces = viewModel.unplacedPieces.collectAsStateWithLifecycle().value,
                         modifier = Modifier
                             .padding(innerPadding)
                     )

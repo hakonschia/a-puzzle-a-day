@@ -2,8 +2,13 @@ package com.example.apuzzleaday
 
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
 
 sealed interface BoardPiece {
     sealed interface Month : BoardPiece {
@@ -34,7 +39,10 @@ data class Piece(
     // TODO this isn't really coordinates its the size, but its not really a size either so idk what to call this
     val coordinates: List<Pair<Int, Int>>,
     val color: Color
-)
+) {
+    val width = coordinates.maxOf { it.first } + 1
+    val height = coordinates.maxOf { it.second } + 1
+}
 
 data class PlacedPiece(
     val piece: Piece,
@@ -117,10 +125,19 @@ class PuzzleViewModel : ViewModel() {
 
     private val _placedPieces = MutableStateFlow<List<PlacedPiece>>(
         listOf(
-            PlacedPiece(pieces[1], 1 to 1),
-            PlacedPiece(pieces[3], 3 to 2)
+            //PlacedPiece(pieces[1], 1 to 1),
+            //PlacedPiece(pieces[3], 3 to 2)
         )
     )
     val placedPieces = _placedPieces.asStateFlow()
 
+    val unplacedPieces = placedPieces
+        .map { placedPieces ->
+            pieces - placedPieces.map { it.piece }
+        }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Lazily,
+            initialValue = pieces
+        )
 }
