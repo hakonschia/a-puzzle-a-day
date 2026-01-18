@@ -17,24 +17,35 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun Board(
     board: List<List<BoardPiece>>,
+    pieces: List<Piece>,
+    placedPieces: List<PlacedPiece>,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
-        board.forEach { row ->
+        board.forEachIndexed { outerIndex, row ->
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
-                row.forEach { piece ->
+                row.forEachIndexed { innerIndex, piece ->
+                    val position = outerIndex to innerIndex
+                    val pieceAtPosition = placedPieces.firstOrNull { it.actualCoordinates.contains(position) }?.piece
+
                     Box(
                         contentAlignment = Alignment.Center,
                         modifier = Modifier
                             .weight(1f)
                             .aspectRatio(1f)
-                            .background(if (piece is BoardPiece.OffGrid) Color.Black else Color.Gray.copy(alpha = 0.5f))
+                            .background(
+                                when {
+                                    piece is BoardPiece.OffGrid -> Color.Black
+                                    pieceAtPosition != null -> pieceAtPosition.color
+                                    else -> Color.Gray.copy(alpha = 0.5f)
+                                }
+                            )
                             .border(1.dp, Color.White)
                     ) {
                         when (piece) {
@@ -51,7 +62,6 @@ fun Board(
                             }
 
                             is BoardPiece.OffGrid -> {
-
                             }
                         }
                     }
