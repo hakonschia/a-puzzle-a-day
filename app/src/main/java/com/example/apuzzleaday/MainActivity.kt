@@ -28,6 +28,7 @@ class MainActivity : ComponentActivity() {
                         availablePlacesForSelectedPiece = viewModel.availablePlacesForSelectedPiece.collectAsStateWithLifecycle().value,
                         onSelectPiece = viewModel::selectPiece,
                         onSelectPosition = viewModel::selectPosition,
+                        onRestartGame = viewModel::restartGame,
                         modifier = Modifier
                             .padding(innerPadding)
                     )

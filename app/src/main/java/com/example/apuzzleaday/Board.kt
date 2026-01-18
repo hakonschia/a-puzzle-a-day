@@ -9,9 +9,11 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
@@ -35,6 +37,7 @@ fun Board(
     availablePlacesForSelectedPiece: List<PlacedPiece>,
     onSelectPiece: (Piece) -> Unit,
     onSelectPosition: (Pair<Int, Int>) -> Unit,
+    onRestartGame: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(
@@ -48,12 +51,22 @@ fun Board(
         Column {
             Row {
                 Button(
+                    onClick = onRestartGame
+                ) {
+                    Text("Restart game")
+                }
+
+                Spacer(Modifier.width(16.dp))
+
+                Button(
                     onClick = {
                         availablePositionOffset = (availablePositionOffset - 1).coerceAtLeast(0)
                     }
                 ) {
                     Text("Previous")
                 }
+
+                Spacer(Modifier.width(8.dp))
 
                 Button(
                     onClick = {

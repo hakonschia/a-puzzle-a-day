@@ -142,6 +142,11 @@ class PuzzleViewModel : ViewModel() {
     private val _availablePlacesForSelectedPiece = MutableStateFlow<List<PlacedPiece>>(emptyList())
     val availablePlacesForSelectedPiece = _availablePlacesForSelectedPiece.asStateFlow()
 
+    fun restartGame() {
+        _placedPieces.value = emptyList()
+        _availablePlacesForSelectedPiece.value = emptyList()
+    }
+
     fun selectPosition(position: Pair<Int, Int>) {
         val availablePlacesForSelectedPiece = availablePlacesForSelectedPiece.value
         val isPositionPossibleToTake = availablePlacesForSelectedPiece.map { it.actualCoordinates }.any { it.contains(position) }
