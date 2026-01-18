@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
                     val viewModel = viewModel<PuzzleViewModel>()
 
                     Board(
-                        board = viewModel.board.collectAsStateWithLifecycle().value,
+                        board = board,
                         placedPieces = viewModel.placedPieces.collectAsStateWithLifecycle().value,
                         unplacedPieces = viewModel.unplacedPieces.collectAsStateWithLifecycle().value,
                         availablePlacesForSelectedPiece = viewModel.availablePlacesForSelectedPiece.collectAsStateWithLifecycle().value,

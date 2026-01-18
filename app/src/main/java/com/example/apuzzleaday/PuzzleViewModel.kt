@@ -52,6 +52,22 @@ data class PlacedPiece(
     }
 }
 
+val board = run {
+    var dayCounter = 1
+
+    //@formatter:off
+    listOf(
+        listOf(BoardPiece.Month.January(), BoardPiece.Month.February(), BoardPiece.Month.March(), BoardPiece.Month.April(), BoardPiece.Month.May(), BoardPiece.Month.June(), BoardPiece.OffGrid),
+        listOf(BoardPiece.Month.July(), BoardPiece.Month.August(), BoardPiece.Month.September(), BoardPiece.Month.October(), BoardPiece.Month.November(), BoardPiece.Month.December(), BoardPiece.OffGrid),
+        listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
+        listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
+        listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
+        listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
+        listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.OffGrid, BoardPiece.OffGrid, BoardPiece.OffGrid, BoardPiece.OffGrid)
+    )
+    //@formatter:on
+}
+
 val pieces = listOf(
     /**
      * . . .
@@ -105,22 +121,6 @@ val pieces = listOf(
 )
 
 class PuzzleViewModel : ViewModel() {
-    private var dayCounter = 1
-
-    private val _board = MutableStateFlow(
-        //@formatter:off
-        listOf(
-            listOf(BoardPiece.Month.January(), BoardPiece.Month.February(), BoardPiece.Month.March(), BoardPiece.Month.April(), BoardPiece.Month.May(), BoardPiece.Month.June(), BoardPiece.OffGrid),
-            listOf(BoardPiece.Month.July(), BoardPiece.Month.August(), BoardPiece.Month.September(), BoardPiece.Month.October(), BoardPiece.Month.November(), BoardPiece.Month.December(), BoardPiece.OffGrid),
-            listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
-            listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
-            listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
-            listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++)),
-            listOf(BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.Day(dayCounter++), BoardPiece.OffGrid, BoardPiece.OffGrid, BoardPiece.OffGrid, BoardPiece.OffGrid)
-        )
-        //@formatter:on
-    )
-    val board = _board.asStateFlow()
 
     private val _placedPieces = MutableStateFlow<List<PlacedPiece>>(emptyList())
     val placedPieces = _placedPieces.asStateFlow()
@@ -164,8 +164,6 @@ class PuzzleViewModel : ViewModel() {
     }
 
     fun selectPiece(piece: Piece) {
-        val board = _board.value
-
         _availablePlacesForSelectedPiece.value = buildList {
             board.indices.forEach { outerIndex ->
                 board[outerIndex].indices.forEach { innerIndex ->
