@@ -25,6 +25,9 @@ class MainActivity : ComponentActivity() {
                         board = viewModel.board.collectAsStateWithLifecycle().value,
                         placedPieces = viewModel.placedPieces.collectAsStateWithLifecycle().value,
                         unplacedPieces = viewModel.unplacedPieces.collectAsStateWithLifecycle().value,
+                        availablePlacesForSelectedPiece = viewModel.availablePlacesForSelectedPiece.collectAsStateWithLifecycle().value,
+                        onSelectPiece = viewModel::selectPiece,
+                        onSelectPosition = viewModel::selectPosition,
                         modifier = Modifier
                             .padding(innerPadding)
                     )

@@ -2,20 +2,25 @@ package com.example.apuzzleaday
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,6 +32,9 @@ fun Board(
     board: List<List<BoardPiece>>,
     placedPieces: List<PlacedPiece>,
     unplacedPieces: List<Piece>,
+    availablePlacesForSelectedPiece: List<PlacedPiece>,
+    onSelectPiece: (Piece) -> Unit,
+    onSelectPosition: (Pair<Int, Int>) -> Unit,
     modifier: Modifier = Modifier
 ) {
     BoxWithConstraints(
@@ -35,8 +43,27 @@ fun Board(
             .fillMaxWidth()
     ) {
         val boxSize = maxWidth / 7
+        var availablePositionOffset by remember(availablePlacesForSelectedPiece) { mutableStateOf(0) }
 
         Column {
+            Row {
+                Button(
+                    onClick = {
+                        availablePositionOffset = (availablePositionOffset - 1).coerceAtLeast(0)
+                    }
+                ) {
+                    Text("Previous")
+                }
+
+                Button(
+                    onClick = {
+                        availablePositionOffset = (availablePositionOffset + 1).coerceAtMost(availablePlacesForSelectedPiece.lastIndex)
+                    }
+                ) {
+                    Text("Next")
+                }
+            }
+
             Column {
                 board.forEachIndexed { outerIndex, row ->
                     Row(
@@ -46,19 +73,29 @@ fun Board(
                         row.forEachIndexed { innerIndex, piece ->
                             val position = outerIndex to innerIndex
                             val pieceAtPosition = placedPieces.firstOrNull { it.actualCoordinates.contains(position) }?.piece
+                            val selectedPiece = availablePlacesForSelectedPiece.getOrNull(availablePositionOffset)?.takeIf {
+                                it.actualCoordinates.contains(position)
+                            }
 
                             Box(
                                 contentAlignment = Alignment.Center,
                                 modifier = Modifier
+                                    .clickable {
+                                        onSelectPosition(position)
+                                    }
                                     .size(boxSize)
                                     .background(
                                         when {
-                                            piece is BoardPiece.OffGrid -> Color.Black
+                                            selectedPiece != null -> selectedPiece.piece.color
                                             pieceAtPosition != null -> pieceAtPosition.color
+                                            piece is BoardPiece.OffGrid -> Color.Black
                                             else -> Color.Gray.copy(alpha = 0.5f)
                                         }
                                     )
-                                    .border(1.dp, Color.White)
+                                    .border(
+                                        width = 1.dp,
+                                        color = if (selectedPiece != null) Color.Green else Color.White
+                                    )
                             ) {
                                 when (piece) {
                                     is BoardPiece.Day -> {
@@ -91,7 +128,11 @@ fun Board(
                 unplacedPieces.forEach { unplacedPiece ->
                     Piece(
                         piece = unplacedPiece,
-                        boxSize = boxSize
+                        boxSize = boxSize,
+                        modifier = Modifier
+                            .clickable {
+                                onSelectPiece(unplacedPiece)
+                            }
                     )
                 }
             }
@@ -102,9 +143,12 @@ fun Board(
 @Composable
 private fun Piece(
     piece: Piece,
-    boxSize: Dp
+    boxSize: Dp,
+    modifier: Modifier = Modifier
 ) {
-    Column {
+    Column(
+        modifier = modifier
+    ) {
         for (i in 0 until piece.width) {
             Row {
                 for (j in 0 until piece.height) {
